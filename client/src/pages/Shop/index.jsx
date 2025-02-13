@@ -9,6 +9,7 @@ import SearchSort from './SearchSort';
 import ProductCard from '../../components/common/ProductCard';
 import { getProducts } from '../../store/slices/productSlice';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useSearchFocus } from '../../hooks/useSearchFocus';
 
 // Debounce helper function
 const debounce = (func, wait) => {
@@ -29,6 +30,9 @@ const Shop = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [searchParams, setSearchParams] = useSearchParams();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  // Use the search focus hook
+  useSearchFocus();
 
   // Redux state
   const { products, loading, error } = useSelector((state) => state.products);

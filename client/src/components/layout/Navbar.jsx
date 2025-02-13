@@ -29,11 +29,12 @@ import {
   KeyboardArrowDown as ArrowDownIcon,
   Menu as MenuIcon,
 } from '@mui/icons-material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const { items: cartItems } = useSelector((state) => state.cart);
@@ -62,6 +63,10 @@ const Navbar = () => {
 
   const handleMobileMenuToggle = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const handleSearchClick = () => {
+    navigate('/shop?focus=search');
   };
 
   const mobileMenu = (
@@ -191,7 +196,7 @@ const Navbar = () => {
 
           {/* Icons and Actions */}
           <Stack direction="row" spacing={{ xs: 1, sm: 2 }} alignItems="center">
-            <IconButton color="primary" component={RouterLink} to="/search">
+            <IconButton color="primary" onClick={handleSearchClick}>
               <SearchIcon />
             </IconButton>
             

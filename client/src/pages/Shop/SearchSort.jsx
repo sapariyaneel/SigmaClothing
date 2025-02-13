@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Box,
   TextField,
@@ -9,10 +9,23 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
+import { debounce } from 'lodash';
 
 const SearchSort = ({ searchQuery, setSearchQuery, sortBy, setSortBy }) => {
+  // Debounced search handler
+  const debouncedSearch = useCallback(
+    debounce((value) => {
+      setSearchQuery(value);
+    }, 500),
+    [setSearchQuery]
+  );
+
   const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+    const { value } = event.target;
+    // Update the input value immediately for UI responsiveness
+    event.target.value = value;
+    // Debounce the actual search
+    debouncedSearch(value);
   };
 
   const handleSortChange = (event) => {
@@ -33,8 +46,8 @@ const SearchSort = ({ searchQuery, setSearchQuery, sortBy, setSortBy }) => {
         fullWidth
         variant="outlined"
         placeholder="Search products..."
-        value={searchQuery}
         onChange={handleSearchChange}
+        defaultValue={searchQuery}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

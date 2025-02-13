@@ -310,7 +310,8 @@ const ProductDetail = () => {
                 display: 'flex', 
                 flexDirection: { xs: 'column', md: 'row' }, 
                 gap: 2,
-                height: { xs: 'auto', md: '550px' }
+                height: 'auto',
+                width: '100%'
               }}>
                 {/* Main Image Container */}
                 <Box 
@@ -328,12 +329,11 @@ const ProductDetail = () => {
                       cursor: 'grabbing'
                     },
                     width: '100%',
-                    maxWidth: '550px',
-                    height: { xs: '550px', sm: '550px', md: '550px' },
+                    height: { xs: '350px', sm: '450px', md: '550px' },
                     order: { xs: 1, md: 2 },
                     flex: 1,
                     display: 'flex',
-                    alignItems: 'flex-start',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     border: '1px solid',
                     borderColor: 'divider',
@@ -360,7 +360,7 @@ const ProductDetail = () => {
                         height: '100%',
                         overflow: 'hidden',
                         display: 'flex',
-                        alignItems: 'flex-start',
+                        alignItems: 'center',
                         justifyContent: 'center',
                         background: 'transparent',
                         margin: 0,
@@ -374,8 +374,8 @@ const ProductDetail = () => {
                         style={{
                           width: '100%',
                           height: '100%',
-                          objectFit: 'cover',
-                          objectPosition: product?.category === 'accessories' ? 'center' : 'top center',
+                          objectFit: 'contain',
+                          objectPosition: 'center',
                           background: 'transparent',
                           margin: 0,
                           padding: 0,
@@ -397,9 +397,10 @@ const ProductDetail = () => {
                       gap: 2,
                       overflowX: { xs: 'auto', md: 'visible' },
                       overflowY: { xs: 'visible', md: 'auto' },
-                      maxHeight: { md: '550px' },
+                      maxHeight: { xs: 'auto', md: '550px' },
                       order: { xs: 2, md: 1 },
-                      width: { xs: '100%', md: '100px' }
+                      width: { xs: '100%', md: '100px' },
+                      pb: { xs: 2, md: 0 }
                     }}
                   >
                     {thumbnails.map((image, index) => (
@@ -425,7 +426,8 @@ const ProductDetail = () => {
                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                           },
                           p: 0,
-                          m: 0
+                          m: 0,
+                          flexShrink: 0
                         }}
                       >
                         <img
@@ -434,8 +436,8 @@ const ProductDetail = () => {
                           style={{
                             width: '100%',
                             height: '100%',
-                            objectFit: 'cover',
-                            objectPosition: product?.category === 'accessories' ? 'center' : 'top center',
+                            objectFit: 'contain',
+                            objectPosition: 'center',
                             margin: 0,
                             padding: 0,
                             display: 'block'

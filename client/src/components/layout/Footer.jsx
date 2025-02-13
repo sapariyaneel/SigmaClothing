@@ -13,8 +13,8 @@ import {
   Alert,
 } from '@mui/material';
 import {
-  Facebook as FacebookIcon,
-  Instagram as InstagramIcon,
+  Email as EmailIcon,
+  GitHub as GitHubIcon,
   Twitter as TwitterIcon,
   LinkedIn as LinkedInIcon,
 } from '@mui/icons-material';
@@ -87,7 +87,7 @@ const Footer = () => {
             </Typography>
             <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 } }}>
               <IconButton
-                href="https://facebook.com"
+                href="mailto:sigmaclothingog@gmail.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{ 
@@ -95,10 +95,10 @@ const Footer = () => {
                   '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' }
                 }}
               >
-                <FacebookIcon />
+                <EmailIcon />
               </IconButton>
               <IconButton
-                href="https://instagram.com"
+                href="https://github.com/sapariyaneel"
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{ 
@@ -106,10 +106,10 @@ const Footer = () => {
                   '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' }
                 }}
               >
-                <InstagramIcon />
+                <GitHubIcon />
               </IconButton>
               <IconButton
-                href="https://twitter.com"
+                href="https://x.com/sapariyaneel_"
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{ 
@@ -120,7 +120,7 @@ const Footer = () => {
                 <TwitterIcon />
               </IconButton>
               <IconButton
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/neelsapariya/"
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{ 

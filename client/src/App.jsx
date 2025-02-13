@@ -54,9 +54,6 @@ const AddProduct = lazyLoad(import('./pages/Admin/AddProduct'));
 const ManageProducts = lazyLoad(import('./pages/Admin/ManageProducts'));
 const ManageFeatured = lazyLoad(import('./pages/Admin/ManageFeatured'));
 
-// Temporary placeholder components until we create the actual pages
-const Search = () => <div>Search Page</div>;
-
 // Loading fallback component
 const LoadingFallback = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -144,14 +141,6 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <About />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/search"
-            element={
-              <PageTransition>
-                <Search />
               </PageTransition>
             }
           />

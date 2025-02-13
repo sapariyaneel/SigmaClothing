@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Box,
   Typography,
@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { debounce } from 'lodash';
 
 const FilterSection = ({
   filters,
@@ -21,12 +22,23 @@ const FilterSection = ({
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   priceRange = [0, 100000],
 }) => {
-  const handlePriceChange = useCallback((event, newValue) => {
-    if (event) {
-      event.preventDefault();
-    }
-    setFilters(prev => ({ ...prev, price: newValue }));
-  }, [setFilters]);
+  // Local state for price to handle immediate UI updates
+  const [localPrice, setLocalPrice] = useState(filters.price);
+
+  // Debounced function to update actual filters
+  const debouncedPriceChange = useCallback(
+    debounce((newValue) => {
+      setFilters(prev => ({ ...prev, price: newValue }));
+    }, 500),
+    [setFilters]
+  );
+
+  const handlePriceChange = (event, newValue) => {
+    // Update local state immediately for UI responsiveness
+    setLocalPrice(newValue);
+    // Debounce the actual filter update
+    debouncedPriceChange(newValue);
+  };
 
   const handleCategoryChange = useCallback((event) => {
     setFilters(prev => ({ 
@@ -107,9 +119,8 @@ const FilterSection = ({
             <AccordionDetails>
               <Box sx={{ px: 2 }}>
                 <Slider
-                  value={filters.price}
+                  value={localPrice}
                   onChange={handlePriceChange}
-                  onChangeCommitted={handlePriceChange}
                   valueLabelDisplay="auto"
                   min={priceRange[0]}
                   max={priceRange[1]}
@@ -127,10 +138,10 @@ const FilterSection = ({
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
                   <Typography variant="body2" color="text.secondary">
-                    ₹{filters.price[0].toLocaleString()}
+                    ₹{localPrice[0].toLocaleString()}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    ₹{filters.price[1].toLocaleString()}
+                    ₹{localPrice[1].toLocaleString()}
                   </Typography>
                 </Box>
               </Box>
