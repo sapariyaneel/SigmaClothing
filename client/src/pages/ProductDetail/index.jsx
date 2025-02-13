@@ -315,18 +315,18 @@ const ProductDetail = () => {
               }}>
                 {/* Main Image Container */}
                 <Box 
-                  {...handlers}
-                  onMouseMove={handleImageZoom}
-                  onMouseEnter={() => setIsZoomed(true)}
-                  onMouseLeave={() => setIsZoomed(false)}
+                  {...(!isMobile && handlers)}
+                  onMouseMove={!isMobile ? handleImageZoom : undefined}
+                  onMouseEnter={!isMobile ? () => setIsZoomed(true) : undefined}
+                  onMouseLeave={!isMobile ? () => setIsZoomed(false) : undefined}
                   sx={{ 
                     position: 'relative',
                     background: '#fff',
                     borderRadius: { xs: 0, md: '12px' },
                     overflow: 'hidden',
-                    cursor: 'grab',
+                    cursor: { xs: 'auto', md: 'grab' },
                     '&:active': {
-                      cursor: 'grabbing'
+                      cursor: { xs: 'auto', md: 'grabbing' }
                     },
                     width: '100%',
                     height: { xs: '300px', sm: '400px', md: '500px' },
@@ -378,8 +378,8 @@ const ProductDetail = () => {
                           margin: 0,
                           padding: 0,
                           display: 'block',
-                          transform: isZoomed ? `scale(2) translate(${(0.5 - zoomPosition.x) * 100}%, ${(0.5 - zoomPosition.y) * 100}%)` : 'scale(1)',
-                          transition: isZoomed ? 'none' : 'transform 0.3s ease-out'
+                          transform: !isMobile && isZoomed ? `scale(2) translate(${(0.5 - zoomPosition.x) * 100}%, ${(0.5 - zoomPosition.y) * 100}%)` : 'scale(1)',
+                          transition: !isMobile && isZoomed ? 'none' : 'transform 0.3s ease-out'
                         }}
                       />
                     </motion.div>
