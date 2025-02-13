@@ -321,7 +321,7 @@ const ProductDetail = () => {
                   onMouseLeave={() => setIsZoomed(false)}
                   sx={{ 
                     position: 'relative',
-                    background: 'transparent',
+                    background: '#fff',
                     borderRadius: { xs: 0, md: '12px' },
                     overflow: 'hidden',
                     cursor: 'grab',
@@ -329,7 +329,7 @@ const ProductDetail = () => {
                       cursor: 'grabbing'
                     },
                     width: '100%',
-                    height: { xs: '350px', sm: '450px', md: '550px' },
+                    height: { xs: '300px', sm: '400px', md: '500px' },
                     order: { xs: 1, md: 2 },
                     flex: 1,
                     display: 'flex',
@@ -353,9 +353,7 @@ const ProductDetail = () => {
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
                       style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
+                        position: 'relative',
                         width: '100%',
                         height: '100%',
                         overflow: 'hidden',
@@ -397,10 +395,15 @@ const ProductDetail = () => {
                       gap: 2,
                       overflowX: { xs: 'auto', md: 'visible' },
                       overflowY: { xs: 'visible', md: 'auto' },
-                      maxHeight: { xs: 'auto', md: '550px' },
+                      maxHeight: { xs: 'auto', md: '500px' },
                       order: { xs: 2, md: 1 },
                       width: { xs: '100%', md: '100px' },
-                      pb: { xs: 2, md: 0 }
+                      pb: { xs: 2, md: 0 },
+                      scrollbarWidth: 'none',
+                      '&::-webkit-scrollbar': {
+                        display: 'none'
+                      },
+                      '-ms-overflow-style': 'none'
                     }}
                   >
                     {thumbnails.map((image, index) => (
@@ -427,7 +430,8 @@ const ProductDetail = () => {
                           },
                           p: 0,
                           m: 0,
-                          flexShrink: 0
+                          flexShrink: 0,
+                          background: '#fff'
                         }}
                       >
                         <img
