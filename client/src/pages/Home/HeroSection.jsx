@@ -1,45 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Container, Skeleton } from '@mui/material';
+import { Box, Typography, Button, Container } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../utils/axios';
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const [bannerUrl, setBannerUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [imageError, setImageError] = useState(false);
+  const bannerUrl = 'https://res.cloudinary.com/dibb74win/image/upload/v1739388291/sigma-clothing/banner/hero-banner.jpg';
 
+  // Preload the image to ensure it exists
   useEffect(() => {
-    const preloadImage = (url) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = resolve;
-        img.onerror = reject;
-      });
-    };
-
-    const fetchBannerImage = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await axios.get('/banner');
-        
-        if (response.data.success) {
-          // Preload the image before showing it
-          await preloadImage(response.data.data);
-          setBannerUrl(response.data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching banner image:', error);
-        setError('Failed to load banner image');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchBannerImage();
+    const img = new Image();
+    img.src = bannerUrl;
+    img.onerror = () => setImageError(true);
   }, []);
 
   return (
@@ -65,33 +38,23 @@ const HeroSection = () => {
         },
       }}
     >
-      {/* Background Image with loading state */}
-      {isLoading ? (
-        <Skeleton 
-          variant="rectangular" 
-          width="100%" 
-          height="100%" 
-          sx={{ position: 'absolute', top: 0, left: 0 }} 
-        />
-      ) : (
-        <Box
-          component={motion.div}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: `url(${bannerUrl || '/images/hero-banner.jpg'})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'brightness(0.9)',
-          }}
-        />
-      )}
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: !imageError ? `url(${bannerUrl})` : 'linear-gradient(45deg, #1976d2, #42a5f5)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'brightness(0.9)',
+        }}
+      />
 
       <Container 
         maxWidth={false}

@@ -91,10 +91,10 @@ const ProductDetail = () => {
 
   const handleImageZoom = (event) => {
     if (isMobile) return;
-
-    const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - left) / width;
-    const y = (event.clientY - top) / height;
+    
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
 
     setZoomPosition({ x, y });
   };
@@ -315,18 +315,19 @@ const ProductDetail = () => {
               }}>
                 {/* Main Image Container */}
                 <Box 
-                  {...(!isMobile && handlers)}
+                  {...handlers}
                   onMouseMove={!isMobile ? handleImageZoom : undefined}
                   onMouseEnter={!isMobile ? () => setIsZoomed(true) : undefined}
                   onMouseLeave={!isMobile ? () => setIsZoomed(false) : undefined}
+                  onClick={() => setIsZoomed(false)}
                   sx={{ 
                     position: 'relative',
                     background: '#fff',
                     borderRadius: { xs: 0, md: '12px' },
                     overflow: 'hidden',
-                    cursor: { xs: 'auto', md: 'grab' },
+                    cursor: isMobile ? 'default' : 'grab',
                     '&:active': {
-                      cursor: { xs: 'auto', md: 'grabbing' }
+                      cursor: isMobile ? 'default' : 'grabbing'
                     },
                     width: '100%',
                     height: { xs: '300px', sm: '400px', md: '500px' },
@@ -378,8 +379,8 @@ const ProductDetail = () => {
                           margin: 0,
                           padding: 0,
                           display: 'block',
-                          transform: !isMobile && isZoomed ? `scale(2) translate(${(0.5 - zoomPosition.x) * 100}%, ${(0.5 - zoomPosition.y) * 100}%)` : 'scale(1)',
-                          transition: !isMobile && isZoomed ? 'none' : 'transform 0.3s ease-out'
+                          transform: isZoomed ? `scale(2) translate(${(0.5 - zoomPosition.x) * 100}%, ${(0.5 - zoomPosition.y) * 100}%)` : 'scale(1)',
+                          transition: isZoomed ? 'none' : 'transform 0.3s ease-out'
                         }}
                       />
                     </motion.div>
