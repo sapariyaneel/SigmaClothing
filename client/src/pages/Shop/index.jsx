@@ -65,7 +65,11 @@ const Shop = () => {
     setFilters(newFilters);
     setAppliedFilters(newFilters);
     debouncedUpdateURL(newFilters);
-  }, [debouncedUpdateURL]);
+    // Close mobile filter menu after applying filters
+    if (isMobile) {
+      setMobileFilterOpen(false);
+    }
+  }, [debouncedUpdateURL, isMobile]);
 
   // Load products based on applied filters
   useEffect(() => {
@@ -158,6 +162,7 @@ const Shop = () => {
                 filters={filters}
                 setFilters={handleFilterChange}
                 priceRange={[0, 100000]}
+                onMobileClose={() => setMobileFilterOpen(false)}
               />
             </Box>
           </Drawer>

@@ -21,6 +21,7 @@ const FilterSection = ({
   categories = ['men', 'women', 'accessories'],
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   priceRange = [0, 100000],
+  onMobileClose
 }) => {
   // Local state for price to handle immediate UI updates
   const [localPrice, setLocalPrice] = useState(filters.price);
@@ -29,8 +30,11 @@ const FilterSection = ({
   const debouncedPriceChange = useCallback(
     debounce((newValue) => {
       setFilters(prev => ({ ...prev, price: newValue }));
+      if (onMobileClose) {
+        onMobileClose();
+      }
     }, 500),
-    [setFilters]
+    [setFilters, onMobileClose]
   );
 
   const handlePriceChange = (event, newValue) => {
@@ -47,7 +51,10 @@ const FilterSection = ({
       // Clear sizes when switching to accessories
       sizes: event.target.value === 'accessories' ? [] : prev.sizes
     }));
-  }, [setFilters]);
+    if (onMobileClose) {
+      onMobileClose();
+    }
+  }, [setFilters, onMobileClose]);
 
   const handleSizeChange = useCallback((size) => {
     setFilters(prev => {
@@ -59,7 +66,10 @@ const FilterSection = ({
         sizes: newSizes
       };
     });
-  }, [setFilters]);
+    if (onMobileClose) {
+      onMobileClose();
+    }
+  }, [setFilters, onMobileClose]);
 
   return (
     <Box sx={{ width: '100%', maxWidth: 280 }}>
