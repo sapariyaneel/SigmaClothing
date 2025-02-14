@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const HeroSection = () => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
-  const bannerUrl = 'https://res.cloudinary.com/dibb74win/image/upload/v1739388291/sigma-clothing/banner/hero-banner.jpg';
+  const bannerUrl = 'https://res.cloudinary.com/dibb74win/image/upload/f_auto,q_auto/v1/sigma-clothing/banner/hero-banner';
 
   // Preload the image to ensure it exists
   useEffect(() => {
