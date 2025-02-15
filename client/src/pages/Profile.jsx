@@ -42,7 +42,6 @@ import {
   Delete as DeleteIcon,
   ShoppingBag as OrderIcon,
   Settings as SettingsIcon,
-  PhotoCamera as CameraIcon,
   CreditCard as CreditCardIcon,
   LocalShipping as ShippingIcon,
   Favorite as FavoriteIcon,
@@ -81,7 +80,6 @@ const Profile = () => {
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -111,7 +109,6 @@ const Profile = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const fileInputRef = React.useRef();
 
   // Update form data when user data changes
   useEffect(() => {
@@ -204,37 +201,6 @@ const Profile = () => {
       setError(error.message || 'Failed to update profile');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handlePhotoUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('profilePicture', file);
-
-    setUploadingPhoto(true);
-    setError('');
-
-    try {
-      const response = await axios.post('/users/profile/picture', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      if (response.data && response.data.profilePicture) {
-        await dispatch(updateProfile(response.data)).unwrap();
-        setSuccess('Profile picture updated successfully');
-      } else {
-        setError('Failed to update profile picture - invalid response');
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      setError(error.response?.data?.message || 'Failed to upload profile picture');
-    } finally {
-      setUploadingPhoto(false);
     }
   };
 
@@ -345,43 +311,13 @@ const Profile = () => {
       <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={3} alignItems="center">
           <Grid item>
-            <Badge
-              overlap="circular"
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              badgeContent={
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                  disabled={uploadingPhoto}
-                  sx={{
-                    bgcolor: 'background.paper',
-                    '&:hover': { bgcolor: 'background.paper' }
-                  }}
-                >
-                  <input
-                    hidden
-                    accept="image/*"
-                    type="file"
-                    onChange={handlePhotoUpload}
-                    ref={fileInputRef}
-                  />
-                  {uploadingPhoto ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    <CameraIcon />
-                  )}
-                </IconButton>
-              }
+            <Avatar
+              src={user?.profilePicture ? `${import.meta.env.VITE_SERVER_URL}${user.profilePicture}` : ''}
+              alt={user?.fullName}
+              sx={{ width: 100, height: 100 }}
             >
-              <Avatar
-                src={user?.profilePicture ? `${import.meta.env.VITE_SERVER_URL}${user.profilePicture}` : ''}
-                alt={user?.fullName}
-                sx={{ width: 100, height: 100 }}
-              >
-                {!user?.profilePicture && user?.fullName?.[0]?.toUpperCase()}
-              </Avatar>
-            </Badge>
+              {!user?.profilePicture && user?.fullName?.[0]?.toUpperCase()}
+            </Avatar>
           </Grid>
           <Grid item xs>
             <Typography variant="h5" gutterBottom>

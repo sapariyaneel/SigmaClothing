@@ -9,6 +9,15 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+        rejectUnauthorized: false
+    },
+    // Add DKIM configuration if you have it
+    dkim: {
+        domainName: 'sigmaclothing.com',
+        keySelector: 'default',
+        privateKey: process.env.DKIM_PRIVATE_KEY
     }
 });
 
@@ -21,18 +30,32 @@ transporter.verify((error, success) => {
     }
 });
 
-// Email templates
+// Email templates with improved headers and structure
 const templates = {
     orderConfirmation: (order) => ({
         subject: 'Order Confirmation - Sigma Clothing',
         html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h1 style="color: #333; text-align: center;">Order Confirmation</h1>
-                <p>Thank you for your order!</p>
-                <p>Order ID: ${order._id}</p>
-                <p>Total Amount: ₹${order.totalAmount}</p>
-                <p>Status: ${order.orderStatus}</p>
-            </div>
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Order Confirmation</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h1 style="color: #333; text-align: center;">Order Confirmation</h1>
+                    <p>Thank you for your order!</p>
+                    <p>Order ID: ${order._id}</p>
+                    <p>Total Amount: ₹${order.totalAmount}</p>
+                    <p>Status: ${order.orderStatus}</p>
+                    <div style="margin-top: 20px; text-align: center; color: #666; font-size: 12px;">
+                        <p>This email was sent from Sigma Clothing</p>
+                        <p>If you did not make this order, please contact our support team immediately.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
         `
     }),
 
@@ -122,11 +145,28 @@ const templates = {
 
 const sendEmail = async (mailOptions) => {
     try {
+        // Add common headers and settings
+        const enhancedMailOptions = {
+            ...mailOptions,
+            from: {
+                name: process.env.EMAIL_FROM_NAME,
+                address: process.env.EMAIL_FROM_ADDRESS
+            },
+            headers: {
+                'X-Priority': '3',
+                'X-MSMail-Priority': 'Normal',
+                'Importance': 'Normal',
+                'X-Mailer': 'Sigma Clothing Mailer',
+                'List-Unsubscribe': `<mailto:unsubscribe@${process.env.EMAIL_DOMAIN}>`
+            }
+        };
+
         console.log('Sending email with options:', {
-            to: mailOptions.to,
-            subject: mailOptions.subject
+            to: enhancedMailOptions.to,
+            subject: enhancedMailOptions.subject
         });
-        const info = await transporter.sendMail(mailOptions);
+
+        const info = await transporter.sendMail(enhancedMailOptions);
         console.log('Email sent successfully:', info.messageId);
         return { success: true, info };
     } catch (error) {

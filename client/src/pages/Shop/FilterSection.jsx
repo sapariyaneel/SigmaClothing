@@ -80,6 +80,7 @@ const FilterSection = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.2 }}
+          style={{ marginBottom: '16px' }}
         >
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -121,6 +122,7 @@ const FilterSection = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.2, delay: 0.1 }}
+          style={{ marginBottom: '16px' }}
         >
           <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -167,6 +169,7 @@ const FilterSection = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2, delay: 0.2 }}
+              style={{ marginBottom: '16px' }}
             >
               <Accordion defaultExpanded>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>

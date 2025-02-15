@@ -52,12 +52,21 @@ const Shop = () => {
   // Debounced function to update URL params
   const debouncedUpdateURL = useCallback(
     debounce((newFilters) => {
-      const params = new URLSearchParams();
-      if (newFilters.category) params.set('category', newFilters.category);
-      if (newFilters.sizes.length > 0) params.set('sizes', newFilters.sizes.join(','));
-      setSearchParams(params, { replace: true }); // Use replace to avoid adding to browser history
+      const params = new URLSearchParams(window.location.search);
+      if (newFilters.category) {
+        params.set('category', newFilters.category);
+      } else {
+        params.delete('category');
+      }
+      if (newFilters.sizes.length > 0) {
+        params.set('sizes', newFilters.sizes.join(','));
+      } else {
+        params.delete('sizes');
+      }
+      // Use history.replaceState to update URL without refresh
+      window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
     }, 500),
-    [setSearchParams]
+    []
   );
 
   // Handle filter changes
@@ -70,6 +79,14 @@ const Shop = () => {
       setMobileFilterOpen(false);
     }
   }, [debouncedUpdateURL, isMobile]);
+
+  // Debounced product fetching function
+  const debouncedFetchProducts = useCallback(
+    debounce((params) => {
+      dispatch(getProducts(params));
+    }, 500),
+    [dispatch]
+  );
 
   // Load products based on applied filters
   useEffect(() => {
@@ -89,8 +106,8 @@ const Shop = () => {
     );
     
     console.log('Fetching products with filters:', queryParams);
-    dispatch(getProducts(queryParams));
-  }, [dispatch, appliedFilters, sortBy, searchQuery]);
+    debouncedFetchProducts(queryParams);
+  }, [debouncedFetchProducts, appliedFilters, sortBy, searchQuery]);
 
   // Filter products client-side for immediate feedback
   const filteredProducts = React.useMemo(() => {
@@ -106,10 +123,6 @@ const Shop = () => {
       return true;
     });
   }, [products, appliedFilters.sizes]);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   if (error) {
     return (
@@ -168,9 +181,13 @@ const Shop = () => {
           </Drawer>
         )}
 
-        {/* Products Grid */}
+        {/* Products Grid with Loading State */}
         <Grid item xs={12} md={9}>
-          {filteredProducts.length === 0 ? (
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+              <LoadingSpinner />
+            </Box>
+          ) : filteredProducts.length === 0 ? (
             <Typography variant="h6" textAlign="center" sx={{ py: 8 }}>
               No products found
             </Typography>
