@@ -273,9 +273,26 @@ exports.resetPassword = async (req, res) => {
 
         console.log('Password reset successful for user:', user.email);
 
+        // Generate a new auth token for immediate login
+        const authToken = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+
         res.status(200).json({
             success: true,
-            message: 'Password reset successful'
+            message: 'Password reset successful',
+            data: {
+                token: authToken,
+                user: {
+                    _id: user._id,
+                    email: user.email,
+                    fullName: user.fullName,
+                    role: user.role,
+                    isVerified: user.isVerified
+                }
+            }
         });
     } catch (error) {
         console.error('Password reset error:', error);

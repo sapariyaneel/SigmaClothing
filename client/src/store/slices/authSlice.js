@@ -143,6 +143,12 @@ export const resetPassword = createAsyncThunk(
   async ({ token, password }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`/auth/reset-password/${token}`, { password });
+      
+      // Store token in localStorage if reset was successful
+      if (response.data.success && response.data.data?.token) {
+        localStorage.setItem('token', response.data.data.token);
+      }
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: 'Password reset failed' });
@@ -283,12 +289,17 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(resetPassword.fulfilled, (state) => {
+      .addCase(resetPassword.fulfilled, (state, action) => {
         state.loading = false;
+        if (action.payload.data?.user && action.payload.data?.token) {
+          state.user = action.payload.data.user;
+          state.token = action.payload.data.token;
+          state.isAuthenticated = true;
+        }
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'An error occurred';
+        state.error = action.payload?.message || 'Password reset failed';
       })
       // Check Auth
       .addCase(checkAuth.pending, (state) => {

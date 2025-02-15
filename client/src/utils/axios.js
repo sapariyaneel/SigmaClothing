@@ -70,7 +70,7 @@ const getCacheTTL = (url) => {
 
 const axiosInstance = axios.create({
   baseURL,
-  withCredentials: true,
+  withCredentials: false, // Changed to false since we're using token-based auth
   timeout: 30000, // Increased timeout for file uploads
   headers: {
     'Content-Type': 'application/json',
