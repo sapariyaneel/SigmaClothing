@@ -18,6 +18,6 @@ router.post('/:id/cancel', validateObjectId('id'), orderController.cancelOrder);
 // Admin routes
 router.use(authorize('admin'));
 router.get('/', orderController.getAllOrders);
-router.patch('/:id/status', orderController.updateOrderStatus);
+router.patch('/:id/status', validateObjectId('id'), orderController.updateOrderStatus);
 
 module.exports = router; 

@@ -279,7 +279,7 @@ const templates = {
                 <div class="email-container">
                     <!-- Header -->
                     <div class="email-header">
-                        <div class="logo">SIGMA</div>
+                        <div class="logo">SIGMA CLOTHING</div>
                         <div class="tagline">Premium Fashion & Lifestyle</div>
                     </div>
 
@@ -394,7 +394,7 @@ const templates = {
                     <div class="email-container">
                         <!-- Header -->
                         <div class="email-header">
-                            <div class="logo">SIGMA</div>
+                            <div class="logo">SIGMA CLOTHING</div>
                             <div class="tagline">Premium Fashion & Lifestyle</div>
                         </div>
 
@@ -510,7 +510,7 @@ const templates = {
                 <div class="email-container">
                     <!-- Header -->
                     <div class="email-header">
-                        <div class="logo">SIGMA</div>
+                        <div class="logo">SIGMA CLOTHING</div>
                         <div class="tagline">Premium Fashion & Lifestyle</div>
                     </div>
 
@@ -658,7 +658,7 @@ const templates = {
                 <div class="email-container">
                     <!-- Header -->
                     <div class="email-header">
-                        <div class="logo">SIGMA</div>
+                        <div class="logo">SIGMA CLOTHING</div>
                         <div class="tagline">Admin Dashboard Alert</div>
                     </div>
 
@@ -912,7 +912,7 @@ const templates = {
                 <div class="email-container">
                     <!-- Header -->
                     <div class="email-header">
-                        <div class="logo">SIGMA</div>
+                        <div class="logo">SIGMA CLOTHING</div>
                         <div class="tagline">Premium Fashion & Lifestyle</div>
                     </div>
 

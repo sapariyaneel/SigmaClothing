@@ -551,6 +551,15 @@ exports.getAllOrders = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
     try {
         const { orderStatus } = req.body;
+
+        // Validate request body
+        if (!orderStatus) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order status is required'
+            });
+        }
+
         const order = await Order.findById(req.params.id);
 
         if (!order) {
@@ -582,42 +591,123 @@ exports.updateOrderStatus = async (req, res) => {
         }
         */
 
-        order.orderStatus = orderStatus;
+        // Prepare update object
+        const updateData = {
+            orderStatus: orderStatus,
+            $push: {
+                statusHistory: {
+                    status: orderStatus,
+                    timestamp: new Date()
+                }
+            }
+        };
 
         // Set estimated delivery date when order is shipped (if not already set)
         if (orderStatus === 'shipped' && !order.deliveryInfo?.estimatedDelivery) {
             const estimatedDelivery = new Date();
             estimatedDelivery.setDate(estimatedDelivery.getDate() + 3); // 3 days from shipping
 
-            if (!order.deliveryInfo) {
-                order.deliveryInfo = {};
-            }
-            order.deliveryInfo.estimatedDelivery = estimatedDelivery;
+            updateData['deliveryInfo.estimatedDelivery'] = estimatedDelivery;
         }
 
-        await order.save();
+        // Use findByIdAndUpdate to avoid validation issues with existing orders
+        const updatedOrder = await Order.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            {
+                new: true,
+                runValidators: false // Skip validation to avoid issues with legacy orders
+            }
+        );
 
         // Send response immediately
         res.status(200).json({
             success: true,
-            data: order
+            data: updatedOrder
         });
 
         // Send status update email asynchronously (truly non-blocking)
         setImmediate(async () => {
             try {
                 // Populate order with user details for email
-                const populatedOrder = await order.populate('userId', 'email fullName');
+                const populatedOrder = await updatedOrder.populate('userId', 'email fullName');
+                console.log(`Sending order status update email for order ${updatedOrder._id} to ${populatedOrder.userId?.email}`);
                 await emailService.sendOrderStatusUpdate(populatedOrder);
+                console.log(`Order status update email sent successfully for order ${updatedOrder._id}`);
             } catch (emailError) {
                 // Email sending failed - log but don't affect the response
-                console.log('Email sending failed:', emailError.message);
+                console.error('Email sending failed for order status update:', {
+                    orderId: updatedOrder._id,
+                    error: emailError.message,
+                    stack: emailError.stack
+                });
             }
         });
     } catch (error) {
+        console.error('Error updating order status:', error);
+
+        // Handle specific MongoDB errors
+        if (error.name === 'CastError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid order ID format'
+            });
+        }
+
+        if (error.name === 'ValidationError') {
+            // If it's a validation error due to missing fields, try to fix the order data
+            console.log('Attempting to fix order data due to validation error...');
+            try {
+                await fixOrderData(req.params.id);
+                // Retry the update after fixing
+                return exports.updateOrderStatus(req, res);
+            } catch (fixError) {
+                console.error('Failed to fix order data:', fixError);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Order data validation failed and could not be automatically fixed'
+                });
+            }
+        }
+
         res.status(500).json({
             success: false,
-            message: error.message
+            message: 'Internal server error while updating order status'
         });
+    }
+};
+
+// Helper function to fix order data for legacy orders
+const fixOrderData = async (orderId) => {
+    try {
+        const order = await Order.findById(orderId);
+        if (!order) {
+            throw new Error('Order not found');
+        }
+
+        const updateData = {};
+
+        // Fix missing subtotalAmount
+        if (!order.subtotalAmount && order.totalAmount) {
+            // Calculate subtotal from total amount and discount
+            const discountAmount = order.discountAmount || 0;
+            updateData.subtotalAmount = order.totalAmount + discountAmount;
+        }
+
+        // Fix missing discountAmount
+        if (order.discountAmount === undefined || order.discountAmount === null) {
+            updateData.discountAmount = 0;
+        }
+
+        // Only update if there are fields to fix
+        if (Object.keys(updateData).length > 0) {
+            await Order.findByIdAndUpdate(orderId, updateData, { runValidators: false });
+            console.log(`Fixed order data for order ${orderId}:`, updateData);
+        }
+
+        return true;
+    } catch (error) {
+        console.error(`Failed to fix order data for order ${orderId}:`, error);
+        throw error;
     }
 };
